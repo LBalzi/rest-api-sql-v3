@@ -96,7 +96,12 @@ app.post('/api/users', async (req, res) => {
 //GET courses route
 app.get('/api/courses', async (req, res) => {
   try {
-    const courses = await Course.findAll();
+    const courses = await Course.findAll({
+      include: {
+        model: User, // Include associated User
+        attributes: ["firstName", "lastName", "emailAddress"] // Select only these fields
+      }
+    });
     res.json(courses);
   } catch (error) {
     console.error('Error fetching courses:', error);
@@ -107,7 +112,12 @@ app.get('/api/courses', async (req, res) => {
 //GET a single course route
 app.get('/api/courses/:id', async (req, res) => {
   try {
-  const course = await Course.findByPk(req.params.id);
+    const course = await Course.findByPk(req.params.id, {
+      include: {
+        model: User, // Include the associated User
+        attributes: ["firstName", "lastName", "emailAddress"] // Select only these fields
+      }
+    });
   if (!course) {
     return res.status(404).json({
       message: "Course was not found",
